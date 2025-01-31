@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+@font-face {
+  font-family: 'Avenir';
+  src: url('font.otf') format('opentype'); /* Local font file */
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+font-family: 'Avenir';
+}
+
+body {
+  overflow: hidden;
+}
+
+:-webkit-full-screen {
+  background-color: #000;
+}
+
+:-ms-fullscreen {
+  background-color: #000;
+}
+
+:fullscreen {
+  background-color: #000;
+}
+
+video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  object-fit: cover;
+  z-index: -1;
+}
+
+.controls {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+}
+
+button {
+  padding: 20px;
+  font-size: 20px;
+  margin: 5px;
+  opacity: 0;
+}
+
+/* Subscribe Box */
+.subscribe-box {
+  position: fixed;
+  right: 0px;
+  bottom: 0px;
+  background-color: white;
+  color: black;
+  padding: 15px 20px;
+  font-size: 18px;
+  cursor: pointer;
+font-family: 'Avenir';
+}
+</style>
+</head>
+<body onclick="openFullscreen();">
+
+<!-- Fullscreen Background Video -->
+<video id="bgVideo" autoplay loop muted>
+  <source src="video.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+<audio id="audio" src="audio.mp3" autoplay loop></audio>
+
+<div class="controls">
+  <button onclick="openFullscreen();">Open Fullscreen</button>
+  <button onclick="closeFullscreen();">Close Fullscreen</button>
+</div>
+
+<!-- Subscribe Box -->
+<div class="subscribe-box" id="sube">
+  Subscribe
+</div>
+
+<iframe height="80px" width="300px" frameborder="0" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCcfs_sELfWIZAPlYBHqn4eA" style="border: 0; width:250px; height:80px; background-color: #000; color: #fff;"></iframe>
+
+<script>
+const API_URL = 'https://openrouter.ai/api/v1/completions';
+    const API_KEY = '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';
+const audio = document.getElementById('audio');
+async function shortenPrompt(){
+
+        const requestBody = {
+            model: "openai/gpt-3.5-turbo",
+            prompt: `Say a YouTuber with 200 subscribers.`,
+            max_tokens: 50,
+            temperature: 0.7
+        };
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch response from OpenRouter API');
+            }
+
+            const data = await response.json();
+
+            if (data.choices && data.choices[0].text) {
+           
+document.getElementById('sube').textContent = data.choices[0].text.trim();
+            } else {
+               
+            }
+        } catch (error) {
+           
+        }
+    }
+var elem = document.documentElement;
+
+function openFullscreen() {
+  if (elem.requestFullscreen) {
+audio.play();
+    elem.requestFullscreen();
+  } else if (elem.webkitRequestFullscreen) {
+    elem.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) { 
+    elem.msRequestFullscreen();
+  }
+}
+
+function closeFullscreen() {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.webkitExitFullscreen) { 
+    document.webkitExitFullscreen();
+  } else if (document.msExitFullscreen) { 
+    document.msExitFullscreen();
+  }
+}
+//shortenPrompt();
+
+</script>
+
+</body>
+</html>
